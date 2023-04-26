@@ -75,7 +75,6 @@ def débuter_partie(idul, secret):
         rep = rep.json()
         raise RuntimeError(rep['message'])
     raise ConnectionError
-    print(allo)
 
 def récupérer_partie(id_partie, idul, secret):
     """Récupérer une partie
