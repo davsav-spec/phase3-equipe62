@@ -1,11 +1,11 @@
 """Module de la classe Quoridor
 Classes: Quoridor - Classe pour encapsuler le jeu Quoridor."""
-    
+
 from copy import deepcopy
 from quoridor_error import QuoridorError
 from graphe import construire_graphe
 import networkx as nx
-# TODO : créer le fichier quoridor_error.py contenant la classe QuoridorError
+
 class Quoridor:
     """Classe pour encapsuler le jeu Quoridor.
 
@@ -60,15 +60,15 @@ class Quoridor:
         #nb murs joueur 2
         if joueurs[1]['murs'] > 10 or joueurs[1]['murs'] < 0:
             raise QuoridorError("Le nombre de murs qu'un joueur peut placer est plus grand que 10, ou négatif.")
-        
+
         #position invalide
         for i in joueurs[0]['pos']:
             if i < 1 or i > 9:
-                raise QuoridorError("La position d'un joueur est invalide.")   
+                raise QuoridorError("La position d'un joueur est invalide.")
         for i in joueurs[1]['pos']:
             if i < 1 or i > 9:
                 raise QuoridorError("La position d'un joueur est invalide.")
-        
+
         if murs is None:
             murs = {'horizontaux': [], 'verticaux': []}
         else:
@@ -85,11 +85,11 @@ class Quoridor:
         for i in murs["verticaux"]:
             if (i[0] > 9 or i[0] < 2) or (i[1] < 1 or i[1] > 8):
                 raise QuoridorError("La position d'un mur est invalide.")
-        
+
         #return deepcopy(joueurs, murs)
         #return deepcopy(self.état(joueurs, murs))
         return {'joueurs': joueurs, 'murs': murs}
- 
+
 
 
     def formater_légende(self):
@@ -203,7 +203,7 @@ class Quoridor:
         for i in liste_ligne:
             nouvelle_grille += i + '\n'
         return nouvelle_grille
-        
+
 
     def __str__(self):
         """Représentation en art ascii de l'état actuel de la partie.
@@ -213,7 +213,7 @@ class Quoridor:
         Returns:
             str: La chaîne de caractères de la représentation."""
         return self.formater_légende() + self.formater_damier()
-        
+
 
     def état_courant(self):
         """Produire l'état actuel du jeu.
@@ -264,9 +264,9 @@ class Quoridor:
         if le_type_de_coup not in coups_valides:
             raise QuoridorError("Le type de coup est invalide.")
         try:
-           position = list(map(int, input("Donnez la position où appliquer ce coup (x,y): {}: ".format(joueur)).split(',')))
+            position = list(map(int, input("Donnez la position où appliquer ce coup (x,y): {}: ".format(joueur)).split(',')))
         except:
-           raise QuoridorError("La position est invalide (en dehors du damier).")
+            raise QuoridorError("La position est invalide (en dehors du damier).")
         if not(1 <= position[0] <= 9) or not(1 <= position[1] <= 9):
             raise QuoridorError("La position est invalide (en dehors du damier).")
         return (le_type_de_coup, position)
@@ -287,9 +287,9 @@ class Quoridor:
         if not (1 <= position[0] <= 9) or not (1 <= position[1] <= 9):
             raise QuoridorError("La position est invalide (en dehors du damier).")
         if position == self.état["joueurs"][0]["pos"] and self.état["joueurs"][1]["pos"]:
-            raise QuoridorError("La position est invalide pour l'état actuel du jeu.")       
+            raise QuoridorError("La position est invalide pour l'état actuel du jeu.")
         self.état["joueurs"][joueur-1]["pos"] = position
-    
+
 
     def placer_un_mur(self, joueur, position, orientation):
         """Placer un mur.
@@ -324,7 +324,7 @@ class Quoridor:
         if self.état['joueurs'][joueur-1]['murs'] == 0:
         #if len(self.murs[joueur-1]) == 10:
             raise QuoridorError("Le joueur a déjà placé tous ses murs.")
-        
+
         #placer les murs
         if orientation == "horizontal":
             self.état["murs"]["horizontaux"].append(position)
@@ -358,5 +358,3 @@ class Quoridor:
         m_coup = nx.shortest_path(graphe, tuple(self.état["joueurs"][joueur - 1]["pos"]), dest)
         self.déplacer_jeton(joueur, [m_coup[1][0], m_coup[1][1]])
         return ('D', [m_coup[1][0], m_coup[1][1]])
-    
-
