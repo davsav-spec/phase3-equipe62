@@ -37,6 +37,7 @@ if __name__ == "__main__":
 
 
     elif args.graphique:
+
         id_partie, état = débuter_partie(args.idul, SECRET)
         game = QuoridorX(état['joueurs'], état['murs'])
         while True:
@@ -49,17 +50,38 @@ if __name__ == "__main__":
                 game.placer_un_mur(1, position, 'verticale')
             game.état = game.vérification(game.état['joueurs'], game.état['murs'])
             id_partie, game.état = jouer_coup(id_partie, move, position, args.idul, SECRET)
-    
-            # Afficher la partie
-            print(str(état))
-            # Demander au joueur de choisir son prochain coup
-            type_coup, position = Quoridor.récupérer_le_coup()
-            # Envoyez le coup au serveur
-            id_partie, état = jouer_coup(
-                id_partie,
-                type_coup,
-                position,
-                args.idul,
-                SECRET,
-            )
-            print(i)
+
+    elif args.automatique:
+        id_partie, état = débuter_partie(args.idul, SECRET)
+        while True:
+            game = QuoridorX(état['joueuurs'], état['murs'])
+            print(game)
+            try:
+                type_coup, position = game.jouer_le_coup()
+                id_partie, état = jouer_coup(id_partie, type_coup, position, args.idul, SECRET)
+            except(RuntimeError, PermissionError):
+                try:
+                    type_coup = 'D'
+                    position = list(nx.shortest_path(game.graphe, tuple(game.état['joueurs'][0]['pos']), 'B1'))[1]
+                    id_partie = jouer_coup(id_partie, type_coup, position, args.idul, SECRET)
+                except(StopIteration):
+                    game.est_terminée()
+                    break
+    else:
+        id_partie, état = débuter_partie(args.idul, SECRET)
+        while True:
+            y = Quoridor(état['joueurs'], état['murs'])
+            print(y.formater_légende())
+            print(y.formater_damier())
+            type_coup, position = y.récupérer_le_coup(1)
+            id_partie, état = jouer_coup(id_partie, type_coup, position, args.idul, SECRET)
+    état = {
+        "joueurs":[
+            {"nom": "shaddrac", "murs": 7, "pos": [5, 5]},
+            {"nom": "david", "murs": 3, "pos": [8, 6]},
+         
+
+        ]
+
+    }
+    print(i)
