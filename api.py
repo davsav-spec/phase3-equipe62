@@ -105,7 +105,7 @@ def récupérer_partie(id_partie, idul, secret):
         rep = rep.json()
         raise RuntimeError(rep['message'])
     raise ConnectionError
-
+    print(a)
 
 def jouer_coup(id_partie, type_coup, position, idul, secret):
     """Jouer un coup
