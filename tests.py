@@ -8,6 +8,10 @@ from quoridor import Quoridor
 
 
 def test_créer_état_pour_une_nouvelle_partie():
+    """Tester la création d'une nouvelle partie.
+
+        Returns:
+            Rien"""
     état = {
         "joueurs": [
             {"nom": "Robin", "murs": 10, "pos": [5, 1]},
@@ -26,6 +30,10 @@ def test_créer_état_pour_une_nouvelle_partie():
 
 
 def test_créer_état_pour_une_partie_avancée():
+    """Tester la création d'une partie avancée.
+
+        Returns:
+            Rien"""
     état = {
         "joueurs": [
             {"nom": "Alfred", "murs": 7, "pos": [5, 5]},
@@ -44,6 +52,10 @@ def test_créer_état_pour_une_partie_avancée():
 
 
 def test_afficher_une_nouvelle_partie():
+    """Tester l'affichage d'une nouvelle partie.
+
+        Returns:
+            Rien"""
     état = {
         "joueurs": [
             {"nom": "Robin", "murs": 10, "pos": [5, 1]},
@@ -86,6 +98,10 @@ def test_afficher_une_nouvelle_partie():
 
 
 def test_afficher_une_partie_avancée():
+    """Tester l'affichage d'une partie avancée.
+
+        Returns:
+            Rien"""
     état = {
         "joueurs": [
             {"nom": "Alfred", "murs": 7, "pos": [5, 5]},
