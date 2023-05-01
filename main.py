@@ -22,18 +22,18 @@ if __name__ == "__main__":
             game.afficher()
 
             try:
-                type_coup, position = jouer_le_coup()
+                type_coup, position = Quoridor.jouer_le_coup()
                 id_partie, état = jouer_coup(id_partie, type_coup, position, args.idul, SECRET)
 
             except(RuntimeError, PermissionError):
 
-            try:
-                type_coup = 'D'
-                position = list(nx.shortest_path(game.graphe, tuple(game.état['joueurs'][0]['pos']), 'B1'))[1]
-                id_partie, état = jouer_coup(id_partie, type_coup, position, args.idul, SECRET)
-            except(StopIteration):
-                game.est_terminée()
-                break
+                try:
+                    type_coup = 'D'
+                    position = list(nx.shortest_path(game.graphe, tuple(game.état['joueurs'][0]['pos']), 'B1'))[1]
+                    id_partie, état = jouer_coup(id_partie, type_coup, position, args.idul, SECRET)
+                except(StopIteration):
+                    game.est_terminée()
+                    break
 
 
     elif args.graphique:
