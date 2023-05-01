@@ -10,7 +10,7 @@ from utilitaire import analyser_commande
 import networkx as nx
 
 # Mettre ici votre secret récupéré depuis le site de PAX
-SECRET = "688027b2-8022-4e66-beb3-bffb4c0dc2bf"
+SECRET = "5ef9ae3a-f643-4324-92a9-e0dc03fc4ab1"
 
 if __name__ == "__main__":
     args = analyser_commande()
