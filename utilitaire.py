@@ -19,7 +19,11 @@ def analyser_commande():
     parser = argparse.ArgumentParser(description='Quoridor')
     parser.add_argument('idul', type=str, help='IDUL du joueur')
     parser.add_argument('-p', '--parties', metavar='', type=bool,\
-    help='Lister les parties existantes')
+                        help='Lister les parties existantes')
+    parser.add_argument('-a', '--automatique', action='store_true',\
+                        help="Jouer en mode automatique")
+    parser.add_argument('-x', '--graphique', action='store_true',\
+                        help="Afficher le jeu dans une fenêtre graphique")
     return parser.parse_args()
 
     # Complétez le code ici
