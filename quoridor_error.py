@@ -3,7 +3,7 @@ class QuoridorError(Exception):
 
 
     Attributes:
-        self.état (dict): self.état du jeu tenu à jour."""   
+        self.état (dict): self.état du jeu tenu à jour."""
     def __init__(self, message):
         """Constructeur de la classe QuoridorError
         Args:
@@ -24,7 +24,7 @@ class QuoridorError(Exception):
             QuoridorError: L'argument 'murs' n'est pas un dictionnaire lorsque présent. X
             QuoridorError: Le total des murs placés et plaçables n'est pas égal à 20. X
             QuoridorError: La position d'un mur est invalide. X"""
-        super().__init__(message)
+        pass
 
     def etat_courant(self, état):
         """Etat courant

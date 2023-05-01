@@ -2,11 +2,10 @@
 
 Ce programme permet de joueur au jeu Quoridor.
 """
-from api import débuter_partie, jouer_coup, lister_parties
+from api import débuter_partie, jouer_coup
 from quoridor import Quoridor
-from utilitaire import analyser_commande, formater_les_parties
-from quoridorx import QuoridorX
 from utilitaire import analyser_commande
+from quoridorx import QuoridorX
 import networkx as nx
 
 # Mettre ici votre secret récupéré depuis le site de PAX
@@ -15,7 +14,7 @@ SECRET = "5ef9ae3a-f643-4324-92a9-e0dc03fc4ab1"
 if __name__ == "__main__":
     args = analyser_commande()
     if args.automatique and args.graphique:
-        
+
         id_partie, état = débuter_partie(args.idul, SECRET)
         while True:
             game = QuoridorX(état['joueurs'], état['murs'])
@@ -31,7 +30,7 @@ if __name__ == "__main__":
                     type_coup = 'D'
                     position = list(nx.shortest_path(game.graphe, tuple(game.état['joueurs'][0]['pos']), 'B1'))[1]
                     id_partie, état = jouer_coup(id_partie, type_coup, position, args.idul, SECRET)
-                except(StopIteration):
+                except StopIteration:
                     game.est_terminée()
                     break
 
@@ -78,9 +77,6 @@ if __name__ == "__main__":
     état = {
         "joueurs":[
             {"nom": "shaddrac", "murs": 7, "pos": [5, 5]},
-            {"nom": "david", "murs": 3, "pos": [8, 6]},
-         
-
+            {"nom": "david", "murs": 3, "pos": [8, 6]},    
         ]
-
     }

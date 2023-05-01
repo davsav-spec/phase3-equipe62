@@ -56,10 +56,12 @@ class Quoridor:
             raise QuoridorError("L'itérable de joueurs en contient un nombre différent de deux.")
         #nb murs joueur 1
         if joueurs[0]['murs'] > 10 or joueurs[0]['murs'] < 0:
-            raise QuoridorError("Le nombre de murs qu'un joueur peut placer est plus grand que 10, ou négatif.")
+            raise QuoridorError("Le nombre de murs qu'un joueur peut placer est\
+                                plus grand que 10, ou négatif.")
         #nb murs joueur 2
         if joueurs[1]['murs'] > 10 or joueurs[1]['murs'] < 0:
-            raise QuoridorError("Le nombre de murs qu'un joueur peut placer est plus grand que 10, ou négatif.")
+            raise QuoridorError("Le nombre de murs qu'un joueur peut placer est\
+                                 plus grand que 10, ou négatif.")
 
         #position invalide
         for i in joueurs[0]['pos']:
@@ -73,7 +75,8 @@ class Quoridor:
             murs = {'horizontaux': [], 'verticaux': []}
         else:
             if not isinstance(murs, dict):
-                raise QuoridorError("L'argument 'murs' n'est pas un dictionnaire lorsque présent.")
+                raise QuoridorError("L'argument 'murs' n'est pas un\
+                                     dictionnaire lorsque présent.")
 
         if (joueurs[0]['murs'] + joueurs[1]['murs'] + len(murs["horizontaux"]) + len(murs["verticaux"])) != 20:
             raise QuoridorError("Le total des murs placés et plaçables n'est pas égal à 20")
@@ -375,7 +378,8 @@ class Quoridor:
                         break
                 return meilleur_coup
             
-        graphe = construire_graphe([self.état["joueurs"][0]["pos"], self.état["joueurs"][1]["pos"]], self.état["murs"]["horizontaux"], self.état["murs"]["verticaux"])
+        graphe = construire_graphe([self.état["joueurs"][0]["pos"], self.état["joueurs"][1]["pos"]],\
+                                    self.état["murs"]["horizontaux"], self.état["murs"]["verticaux"])
         coups_possibles = self.coups_possibles(joueur)
         meilleur_coup = None
         meilleur_score = float('-inf') if joueur == 1 else float('inf')
