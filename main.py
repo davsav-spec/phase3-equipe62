@@ -14,7 +14,6 @@ SECRET = "5ef9ae3a-f643-4324-92a9-e0dc03fc4ab1"
 if __name__ == "__main__":
     args = analyser_commande()
     if args.automatique and args.graphique:
-
         id_partie, état = débuter_partie(args.idul, SECRET)
         while True:
             game = QuoridorX(état['joueurs'], état['murs'])
