@@ -337,24 +337,61 @@ class Quoridor:
         self.état['joueurs'][joueur-1]['murs'] -= 1
 
 
-    def jouer_le_coup(self, joueur):
-        """Jouer un coup automatique pour un joueur.
-        Pour le joueur spécifié, jouer automatiquement son meilleur coup pour l'self.état actuel
-        de la partie. Ce coup est soit le déplacement de son jeton, soit le placement d'un
-        mur horizontal ou vertical.
-        Args:
-            joueur (int): Un entier spécifiant le numéro du joueur (1 ou 2).
-        Raises:
-            QuoridorError: Le numéro du joueur est autre que 1 ou 2.
-            QuoridorError: La partie est déjà terminée.
-        Returns:
-            Tuple[str, List[int, int]]: Un tuple composé du type et de la position du coup joué."""
+    def jouer_le_coup(self, joueur, profondeur=2, alpha=float('-inf'), beta=float('inf')):
         if joueur not in [1, 2]:
             raise QuoridorError("Le numéro du joueur est autre que 1 ou 2.")
         if self.est_terminée():
             raise QuoridorError("La partie est déjà terminée.")
+        
+        def evaluation(état, joueur):
+            # La fonction d'évaluation est la distance Manhattan entre le joueur et sa destination
+            pos_joueur = état["joueurs"][joueur - 1]["pos"]
+            pos_dest = (8, 4) if joueur == 1 else (0, 4)
+            return abs(pos_dest[0] - pos_joueur[0]) + abs(pos_dest[1] - pos_joueur[1])
+        
+        def minimax_alpha_beta(état, profondeur, joueur, alpha, beta):
+            if profondeur == 0 or état.est_terminée():
+                return evaluation(état, joueur)
+            if joueur == 1:
+                meilleur_coup = float('-inf')
+                for coup in état.coups_possibles(1):
+                    état.jouer_coup(1, coup)
+                    score = minimax_alpha_beta(état, profondeur - 1, 2, alpha, beta)
+                    état.annuler_coup()
+                    meilleur_coup = max(meilleur_coup, score)
+                    alpha = max(alpha, score)
+                    if beta <= alpha:
+                        break
+                return meilleur_coup
+            else:
+                meilleur_coup = float('inf')
+                for coup in état.coups_possibles(2):
+                    état.jouer_coup(2, coup)
+                    score = minimax_alpha_beta(état, profondeur - 1, 1, alpha, beta)
+                    état.annuler_coup()
+                    meilleur_coup = min(meilleur_coup, score)
+                    beta = min(beta, score)
+                    if beta <= alpha:
+                        break
+                return meilleur_coup
+            
         graphe = construire_graphe([self.état["joueurs"][0]["pos"], self.état["joueurs"][1]["pos"]], self.état["murs"]["horizontaux"], self.état["murs"]["verticaux"])
-        dest = "B" + str(joueur)
-        m_coup = nx.shortest_path(graphe, tuple(self.état["joueurs"][joueur - 1]["pos"]), dest)
-        self.déplacer_jeton(joueur, [m_coup[1][0], m_coup[1][1]])
-        return ('D', [m_coup[1][0], m_coup[1][1]])
+        coups_possibles = self.coups_possibles(joueur)
+        meilleur_coup = None
+        meilleur_score = float('-inf') if joueur == 1 else float('inf')
+        for coup in coups_possibles:
+            self.jouer_coup(joueur, coup)
+            score = minimax_alpha_beta(self, profondeur - 1, 2 if joueur == 1 else 1, alpha, beta)
+            self.annuler_coup()
+            if (joueur == 1 and score > meilleur_score) or (joueur == 2 and score < meilleur_score):
+                meilleur_coup = coup
+                meilleur_score = score
+            if joueur == 1:
+                alpha = max(alpha, score)
+            else:
+                beta = min(beta, score)
+            if beta <= alpha:
+                break
+            
+        self.jouer_coup(joueur, meilleur_coup)
+        return ('D', meilleur_coup)
