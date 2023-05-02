@@ -5,7 +5,6 @@ from copy import deepcopy
 from quoridor_error import QuoridorError
 from graphe import construire_graphe
 import networkx as nx
-import math
 
 class Quoridor:
     """Classe pour encapsuler le jeu Quoridor.
@@ -237,7 +236,7 @@ class Quoridor:
             str/bool: Le nom du gagnant si la partie est terminée; False autrement.
         """
         if self.état['joueurs'][0]['pos'][1] == 9:
-            return self.état_courant['joueurs'][0]['nom']
+            return self.état['joueurs'][0]['nom']
         elif self.état['joueurs'][1]['pos'][1] == 1:
             return self.état['joueurs'][1]['nom']
         else:
@@ -276,7 +275,7 @@ class Quoridor:
         if not(1 <= position[0] <= 9) or not(1 <= position[1] <= 9):
             raise QuoridorError("La position est invalide (en dehors du damier).")
         return (le_type_de_coup, position)
-        
+
 
     def déplacer_jeton(self, joueur, position):
         """Déplace un jeton.
@@ -359,10 +358,10 @@ class Quoridor:
             raise QuoridorError("Le numéro du joueur est autre que 1 ou 2.")
         if self.est_terminée():
             raise QuoridorError("La partie est déjà terminée.")
-        
+   
         # Construire le graphe
         graphe = construire_graphe([self.état["joueurs"][0]["pos"], self.état["joueurs"][1]["pos"]], self.état["murs"]["horizontaux"], self.état["murs"]["verticaux"])
-        
+    
         # Trouver le plus court chemin pour le joueur et son adversaire
         dest_joueur = "B" + str(joueur)
         dest_adversaire = "B" + str(3 - joueur)
@@ -389,3 +388,4 @@ class Quoridor:
         # Sinon, déplacer le jeton du joueur
         self.déplacer_jeton(joueur, [chemin_joueur[1][0], chemin_joueur[1][1]])
         return ('D', [chemin_joueur[1][0], chemin_joueur[1][1]])
+    
