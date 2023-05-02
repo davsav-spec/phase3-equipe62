@@ -2,13 +2,13 @@ from quoridor import Quoridor
 import turtle
 class QuoridorX(Quoridor):
     def __init__(self,joueurs, murs):
-      super().__init__(joueurs, murs)
-      self.__turtle = turtle.Turtle()
-      self.__turtle.speed(0)
-      self.__turtle.hideturtle()
-      self.__turtle.penup()
-      self.__draw_board()
-      self.afficher()
+        super().__init__(joueurs, murs)
+        self.__turtle = turtle.Turtle()
+        self.__turtle.speed(0)
+        self.__turtle.hideturtle()
+        self.__turtle.penup()
+        self.__draw_board()
+        self.afficher()
         
     def afficher(self):
         self.__draw_pawns()

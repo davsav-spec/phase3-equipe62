@@ -367,7 +367,7 @@ class Quoridor:
         dest_adversaire = "B" + str(3 - joueur)
         chemin_joueur = nx.shortest_path(graphe, tuple(self.état["joueurs"][joueur - 1]["pos"]), dest_joueur)
         chemin_adversaire = nx.shortest_path(graphe, tuple(self.état["joueurs"][2 - joueur]["pos"]), dest_adversaire)
-        
+
         # Si le chemin de l'adversaire est plus court, placer un mur pour lui barrer le chemin
         if len(chemin_adversaire) < len(chemin_joueur):
             for i in range(len(chemin_adversaire) - 1):
@@ -384,7 +384,7 @@ class Quoridor:
                     return ('MH' if orientation == 'horizontal' else 'MV', position)
                 except QuoridorError:
                     continue
-        
+  
         # Sinon, déplacer le jeton du joueur
         self.déplacer_jeton(joueur, [chemin_joueur[1][0], chemin_joueur[1][1]])
         return ('D', [chemin_joueur[1][0], chemin_joueur[1][1]])
