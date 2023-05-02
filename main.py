@@ -52,7 +52,7 @@ if __name__ == "__main__":
     elif args.automatique:
         id_partie, état = débuter_partie(args.idul, SECRET)
         while True:
-            game = QuoridorX(état['joueuurs'], état['murs'])
+            game = QuoridorX(état['joueurs'], état['murs'])
             print(game)
             try:
                 type_coup, position = game.jouer_le_coup()
@@ -75,7 +75,7 @@ if __name__ == "__main__":
             id_partie, état = jouer_coup(id_partie, type_coup, position, args.idul, SECRET)
     état = {
         "joueurs":[
-            {"nom": "shaddrac", "murs": 7, "pos": [5, 5]},
-            {"nom": "david", "murs": 3, "pos": [8, 6]},    
+            {"nom": "Aybro1", "murs": 7, "pos": [5, 5]},
+            {"nom": "automate", "murs": 3, "pos": [8, 6]},    
         ]
     }
