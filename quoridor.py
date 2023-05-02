@@ -229,17 +229,19 @@ class Quoridor:
         """
         return deepcopy(self.état)
 
+
     def est_terminée(self):
         """Déterminer si la partie est terminée.
         Returns:
             str/bool: Le nom du gagnant si la partie est terminée; False autrement.
         """
         if self.état['joueurs'][0]['pos'][1] == 9:
-            return self.état_courant['joueurs'][0]['nom']
+            return self.état['joueurs'][0]['nom']
         elif self.état['joueurs'][1]['pos'][1] == 1:
             return self.état['joueurs'][1]['nom']
         else:
             return False
+
 
     def récupérer_le_coup(self, joueur):
         """Récupérer le coup
@@ -273,7 +275,7 @@ class Quoridor:
         if not(1 <= position[0] <= 9) or not(1 <= position[1] <= 9):
             raise QuoridorError("La position est invalide (en dehors du damier).")
         return (le_type_de_coup, position)
-        
+
 
     def déplacer_jeton(self, joueur, position):
         """Déplace un jeton.
@@ -340,62 +342,50 @@ class Quoridor:
         self.état['joueurs'][joueur-1]['murs'] -= 1
 
 
-    def jouer_le_coup(self, joueur, profondeur=2, alpha=float('-inf'), beta=float('inf')):
+    def jouer_le_coup(self, joueur):
+        """Jouer un coup automatique pour un joueur.
+        Pour le joueur spécifié, jouer automatiquement son meilleur coup pour l'self.état actuel
+        de la partie. Ce coup est soit le déplacement de son jeton, soit le placement d'un
+        mur horizontal ou vertical.
+        Args:
+            joueur (int): Un entier spécifiant le numéro du joueur (1 ou 2).
+        Raises:
+            QuoridorError: Le numéro du joueur est autre que 1 ou 2.
+            QuoridorError: La partie est déjà terminée.
+        Returns:
+            Tuple[str, List[int, int]]: Un tuple composé du type et de la position du coup joué."""
         if joueur not in [1, 2]:
             raise QuoridorError("Le numéro du joueur est autre que 1 ou 2.")
         if self.est_terminée():
             raise QuoridorError("La partie est déjà terminée.")
+   
+        # Construire le graphe
+        graphe = construire_graphe([self.état["joueurs"][0]["pos"], self.état["joueurs"][1]["pos"]], self.état["murs"]["horizontaux"], self.état["murs"]["verticaux"])
+    
+        # Trouver le plus court chemin pour le joueur et son adversaire
+        dest_joueur = "B" + str(joueur)
+        dest_adversaire = "B" + str(3 - joueur)
+        chemin_joueur = nx.shortest_path(graphe, tuple(self.état["joueurs"][joueur - 1]["pos"]), dest_joueur)
+        chemin_adversaire = nx.shortest_path(graphe, tuple(self.état["joueurs"][2 - joueur]["pos"]), dest_adversaire)
         
-        def evaluation(état, joueur):
-            # La fonction d'évaluation est la distance Manhattan entre le joueur et sa destination
-            pos_joueur = état["joueurs"][joueur - 1]["pos"]
-            pos_dest = (8, 4) if joueur == 1 else (0, 4)
-            return abs(pos_dest[0] - pos_joueur[0]) + abs(pos_dest[1] - pos_joueur[1])
+        # Si le chemin de l'adversaire est plus court, placer un mur pour lui barrer le chemin
+        if len(chemin_adversaire) < len(chemin_joueur):
+            for i in range(len(chemin_adversaire) - 1):
+                pos1 = chemin_adversaire[i]
+                pos2 = chemin_adversaire[i + 1]
+                if pos1[0] == pos2[0]:
+                    orientation = "horizontal"
+                    position = (pos1[0], min(pos1[1], pos2[1]))
+                else:
+                    orientation = "vertical"
+                    position = (min(pos1[0], pos2[0]), pos1[1])
+                try:
+                    self.placer_un_mur(joueur, position, orientation)
+                    return ('MH' if orientation == 'horizontal' else 'MV', position)
+                except QuoridorError:
+                    continue
         
-        def minimax_alpha_beta(état, profondeur, joueur, alpha, beta):
-            if profondeur == 0 or état.est_terminée():
-                return evaluation(état, joueur)
-            if joueur == 1:
-                meilleur_coup = float('-inf')
-                for coup in état.coups_possibles(1):
-                    état.jouer_coup(1, coup)
-                    score = minimax_alpha_beta(état, profondeur - 1, 2, alpha, beta)
-                    état.annuler_coup()
-                    meilleur_coup = max(meilleur_coup, score)
-                    alpha = max(alpha, score)
-                    if beta <= alpha:
-                        break
-                return meilleur_coup
-            else:
-                meilleur_coup = float('inf')
-                for coup in état.coups_possibles(2):
-                    état.jouer_coup(2, coup)
-                    score = minimax_alpha_beta(état, profondeur - 1, 1, alpha, beta)
-                    état.annuler_coup()
-                    meilleur_coup = min(meilleur_coup, score)
-                    beta = min(beta, score)
-                    if beta <= alpha:
-                        break
-                return meilleur_coup
-            
-        graphe = construire_graphe([self.état["joueurs"][0]["pos"], self.état["joueurs"][1]["pos"]],\
-                                    self.état["murs"]["horizontaux"], self.état["murs"]["verticaux"])
-        coups_possibles = self.coups_possibles(joueur)
-        meilleur_coup = None
-        meilleur_score = float('-inf') if joueur == 1 else float('inf')
-        for coup in coups_possibles:
-            self.jouer_coup(joueur, coup)
-            score = minimax_alpha_beta(self, profondeur - 1, 2 if joueur == 1 else 1, alpha, beta)
-            self.annuler_coup()
-            if (joueur == 1 and score > meilleur_score) or (joueur == 2 and score < meilleur_score):
-                meilleur_coup = coup
-                meilleur_score = score
-            if joueur == 1:
-                alpha = max(alpha, score)
-            else:
-                beta = min(beta, score)
-            if beta <= alpha:
-                break
-            
-        self.jouer_coup(joueur, meilleur_coup)
-        return ('D', meilleur_coup)
+        # Sinon, déplacer le jeton du joueur
+        self.déplacer_jeton(joueur, [chemin_joueur[1][0], chemin_joueur[1][1]])
+        return ('D', [chemin_joueur[1][0], chemin_joueur[1][1]])
+    
